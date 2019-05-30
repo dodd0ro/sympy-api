@@ -22,25 +22,9 @@ def error(message=None, code=None, data=None):
 
 ### HELPERS ####
 
-
 def _json_serial(obj):
     """JSON serializer for objects not serializable by default json code"""
 
     if isinstance(obj, (datetime, date)):
         return obj.isoformat()
     raise TypeError("Type %s not serializable" % type(obj))
-
-
-# def fail(data=None):
-#     response = {'status': 'success'}
-#     if data: response['data'] = data
-#     return json.dumps(response)
-
-# def error(message=None, code=None, data=None):
-#     response = {'status': 'fail'}
-#     if message: response['message'] = message
-#     if code: response['code'] = code
-#     if data: response['data'] = data
-#     return json.dumps(response)
-
-    

@@ -16,6 +16,6 @@ class Access:
         return code
 
     @classmethod
-    def check(cls, target_code, user_code):
-        return target_code == (target_code & user_code)
+    def check(cls, required_code, user_code):
+        return required_code == (required_code & user_code)
 

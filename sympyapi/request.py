@@ -5,18 +5,22 @@ from operator import attrgetter
 class ApiRequest:
     DEFAULT =  object()
 
-    def __init__(self, args:dict, data):
-        self._args = args
-        self._data = data
+    def __init__(self, args, data, method_type=None):
+        self.args = args
+        self.data = data
+        if method_type:
+            self.method_type = method_type
+        else:
+            self.method_type = 'POST' if data else 'GET'
 
     def get(self, arg_name, def_val=DEFAULT, argtype=DEFAULT):
         '''
         argtype - проверка и преобразование не касаются def_val
 
         '''
-        if arg_name in self._args:
-            arg = self._args[arg_name]
-            if arg == '':  #bad?
+        if arg_name in self.args:
+            arg = self.args[arg_name]
+            if arg == '':  #BAD?
                 if def_val != self.DEFAULT:
                     return def_val
                 else:
@@ -27,16 +31,16 @@ class ApiRequest:
             raise ApiExeptionHelper('missedArgument', arg_name)
 
         if argtype != self.DEFAULT:
-            to_type(arg, arg_name, argtype)
+            arg = to_type(arg, arg_name, argtype)
 
         return arg
 
     def get_data(self, key=None, def_val=DEFAULT, argtype=None):
         if key:
             try:
-                if key in self._data:
+                if key in self.data:
                     try:
-                        data = self._data[key]
+                        data = self.data[key]
                         if data == '':  #bad can be ['']
                             if def_val != self.DEFAULT:
                                 return def_val
@@ -57,7 +61,7 @@ class ApiRequest:
                 self.__raise_data_is_not_dict()
         else:
             
-            data = self._data
+            data = self.data
                 
         if argtype:
             data = to_type(data, 'POST_DATA', argtype)
@@ -66,7 +70,7 @@ class ApiRequest:
 
     def __raise_data_is_not_dict(self):
         raise ApiExeptionHelper(
-            'wrongValueType', 'POST_DATA', self._data, 'dict')
+            'wrongValueType', 'POST_DATA', self.data, 'dict')
     
     
 def to_type(arg, arg_name, argtype):
