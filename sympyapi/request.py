@@ -13,37 +13,36 @@ class ApiRequest:
         else:
             self.method_type = 'POST' if data else 'GET'
 
-    def get(self, arg_name, def_val=DEFAULT, argtype=DEFAULT):
+    def get(self, arg_name, default=DEFAULT, argtype=DEFAULT):
         '''
-        argtype - проверка и преобразование не касаются def_val
+        argtype - проверка и преобразование не касаются default
 
         '''
         if arg_name in self.args:
             arg = self.args[arg_name]
             if arg == '':  #BAD?
-                if def_val != self.DEFAULT:
-                    return def_val
+                if default != self.DEFAULT:
+                    return default
                 else:
                     raise ApiExeptionHelper('wrongValueType', arg_name, None, argtype)
-        elif def_val != self.DEFAULT:
-            return def_val
+        elif default != self.DEFAULT:
+            return default
         else:
             raise ApiExeptionHelper('missedArgument', arg_name)
 
         if argtype != self.DEFAULT:
             arg = to_type(arg, arg_name, argtype)
-
         return arg
 
-    def get_data(self, key=None, def_val=DEFAULT, argtype=None):
+    def get_data(self, key=None, default=DEFAULT, argtype=None):
         if key:
             try:
                 if key in self.data:
                     try:
                         data = self.data[key]
                         if data == '':  #bad can be ['']
-                            if def_val != self.DEFAULT:
-                                return def_val
+                            if default != self.DEFAULT:
+                                return default
                             else:
                                 raise ApiExeptionHelper(
                                     'wrongValueType',
@@ -52,8 +51,8 @@ class ApiRequest:
                                     argtype)
                     except TypeError:  # if data not dict
                         self.__raise_data_is_not_dict()
-                elif def_val != self.DEFAULT:
-                    return def_val
+                elif default != self.DEFAULT:
+                    return default
                 else: # hgj 
                     raise ApiExeptionHelper('missedArgument',
                                             'POST_DATA[{}]'.format(key))

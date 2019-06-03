@@ -27,7 +27,7 @@ def _missedArgument(method_name, argument_name):
 @_default_method('wrongValueType')
 def _wrongValueType(method_name, arg_name, arg, right_arg_type):
     return json.dumps({
-        'error': "Argument '{}' in method '{}' mast be {}.".format(
+        'error': "Argument '{}' in method '{}' mast be '{}'.".format(
             arg_name, method_name, right_arg_type),
         'data': {arg_name: arg} })
 
@@ -60,10 +60,7 @@ class ApiExeptions:
     
     def method(self, name):  # decorator
         def decorator(function):
-            def wrapper(*args, **kwargs):
-                response = function(*args, **kwargs)
-                return response
-            self.methods[name] = wrapper
+            self.methods[name] = function
         return decorator
 
     def get(self, method_name):

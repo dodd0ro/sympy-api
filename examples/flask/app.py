@@ -25,14 +25,15 @@ def api_test(request):
     <= {"status": "success", "data": {"a": 1.2, "b": [1, 2, 3], "method": "GET"}}
     """
     data = {}
-    data['a'] = request.get('a', '1.23', argtype='float')
+    data['a'] = request.get('a', argtype='float')
     data['b'] = request.get('b', [1, 2, 3], argtype='List[str]')
+    print(type(data['b'][0]))
     data['method'] = request.method_type
     return jsend.success(data)
 
 ### API ACCESS CHECK ###
 
-@api.get_access_code
+@api.get_access_code(token_arg='token') 
 def _(token):
     command = 'SELECT access_code FROM users WHERE token=?'
     conn = sqlite.connect(DB_PATH)
@@ -43,7 +44,7 @@ def _(token):
     access_code = fetch[0] if fetch else 0
     return access_code
 
-@api.check_access(token_arg='token') 
+@api.check_access
 def _(required_access_code, access_code):  # default
     return Access.check(required_access_code or 0, access_code or 0)
 
@@ -55,16 +56,16 @@ def _(method_name):
     return jsend.error(message, code=404)
 
 @api.exceptions.method('missedArgument')
-def _(method_name, argument_name):
+def _(method_name, arg):
     message = "Method '{}' missing required argument: '{}'.".format(
-        method_name, argument_name)
+        method_name, arg)
     return jsend.error(message, code=400)
 
 @api.exceptions.method('wrongValueType')
-def _(method_name, arg_name, arg, right_arg_type):
+def _(method_name, arg, value, argtype):
     message = "Argument '{}' in method '{}' mast be '{}'.".format(
-        arg_name, method_name, right_arg_type)
-    data = {arg_name: arg} 
+        arg, method_name, argtype)
+    data = {arg: value} 
     return jsend.error(message, data=data, code=400)
 
 @api.exceptions.method('wrongMethodType')

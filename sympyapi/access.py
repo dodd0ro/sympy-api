@@ -9,11 +9,11 @@ class Access:
         self.calc(*args)
 
     @classmethod
-    def calc(cls, *args):
-        code = 0
-        for code in args:
-            code += cls.codes[code]
-        return code
+    def calc(cls, *codes):
+        res_code = 0
+        for c in codes:
+            res_code += cls.codes[c]
+        return res_code
 
     @classmethod
     def check(cls, required_code, user_code):

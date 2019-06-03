@@ -29,14 +29,14 @@ class SympyApi:
             
         return decorator
 
-    def check_access(self, token_arg='token'):  # decorator
-        def decorator(function):
+    def check_access(self, function):  # decorator
+        def decorator():
             self._check_access = function
-            self._token_arg_name = token_arg
         return decorator
 
-    def get_access_code(self, function):  # decorator
-        def decorator():
+    def get_access_code(self, token_arg='token'):  # decorator
+        def decorator(function):
+            self._token_arg_name = token_arg
             self._get_access_code = function
         return decorator
 
